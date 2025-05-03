@@ -1,0 +1,14 @@
+.bg-login-image {
+    background: url('/img/hr-login-bg.jpg');
+    background-position: center;
+    background-size: cover;
+}
+
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+.card {
+    border-radius: 1rem;
+}
