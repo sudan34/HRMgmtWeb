@@ -8,14 +8,18 @@ namespace HRMgmtWeb.Models
         public int Id { get; set; }
 
         [Required]
-        public string EmployeeId { get; set; }
+        [StringLength(100)]
+        public string EmployeeCode { get; set; }
 
         [Required]
+        [StringLength(50)]
         public string FirstName { get; set; }
 
         [Required]
+        [StringLength(50)]
         public string LastName { get; set; }
 
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
 
@@ -23,12 +27,22 @@ namespace HRMgmtWeb.Models
         public DateTime DateOfBirth { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime JoinDate { get; set; }
+        public DateTime JoinDate { get; set; } = DateTime.UtcNow;
 
         public int DepartmentId { get; set; }
-        public Department Department { get; set; }
 
+        [Required]
+        [StringLength(100)]
         public string Position { get; set; }
-        public EmploymentStatus Status { get; set; } // Active, Terminated, OnLeave
+
+        public EmploymentStatus Status { get; set; } = EmploymentStatus.Active;
+
+        [Phone]
+        public string PhoneNumber { get; set; }
+
+        public string Address { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime? ModifiedDate { get; set; }
     }
 }

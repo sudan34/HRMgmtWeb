@@ -2,6 +2,7 @@ using HRMgmtWeb.Data;
 using HRMgmtWeb.Infrastructure;
 using HRMgmtWeb.Models;
 using HRMgmtWeb.Services;
+using HRMgmtWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +34,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddTransient<IStartupFilter, SuperAdminStartupFilter>();
 
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

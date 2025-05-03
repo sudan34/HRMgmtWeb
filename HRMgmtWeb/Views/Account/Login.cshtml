@@ -10,101 +10,82 @@
     var loginAttempts = HttpContextAccessor.HttpContext?.Session.GetInt32("LoginAttempts") ?? 0;
     var isLockedOut = HttpContextAccessor.HttpContext?.Session.GetString("AccountLocked") == "true";
 }
-
-<div class="row justify-content-center">
-    <div class="col-xl-6 col-lg-8 col-md-10">
-        <div class="card o-hidden border-0 shadow-lg my-5">
-            <div class="card-body p-0">
-                <div class="p-5">
+<div class="container">
+    <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow border-0">
+                <div class="card-body p-4 p-md-5">
+                    <!-- Header -->
                     <div class="text-center mb-4">
-                        <img src="~/img/company-logo.png" alt="Logo" height="50" class="mb-3">
-                        <h1 class="h4 text-gray-900 mb-2">HR Management System</h1>
-                        <h2 class="h5 text-gray-800">Super Admin Portal</h2>
+                        <i class="bi bi-person-badge text-primary" style="font-size: 2.5rem;"></i>
+                        <h2 class="h3 mt-3 mb-1 fw-bold">HR Portal</h2>
+                        <p class="text-muted">Super Admin Login</p>
                     </div>
 
-                    <!-- Security Notifications -->
-                    @if (isLockedOut)
-                    {
-                        <div class="alert alert-danger">
-                            <i class="fas fa-lock"></i> Account temporarily locked. Please try again later or contact support.
-                        </div>
-                    }
-                    else if (loginAttempts > 2)
-                    {
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle"></i> Multiple failed attempts detected. @(5 - loginAttempts) attempts remaining.
-                        </div>
-                    }
-
-                    @if (ViewData["ErrorMessage"] != null)
-                    {
-                        <div class="alert alert-danger">
-                            <i class="fas fa-times-circle"></i> @ViewData["ErrorMessage"]
-                        </div>
-                    }
-
-                    <form class="user" method="post" asp-action="Login" asp-antiforgery="true" id="loginForm">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-
+                    <!-- Login Form -->
+                    <form method="post">
                         <!-- Email Field -->
-                        <div class="form-group mb-4">
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input asp-for="Email" class="form-control form-control-user"
-                                       placeholder="Enter Email Address..."
-                                       autocomplete="username"
-                                       disabled="@isLockedOut" />
+                                <span class="input-group-text">
+                                    <i class="bi bi-envelope"></i>
+                                </span>
+                                <input asp-for="Email" type="email" class="form-control form-control-lg"
+                                       placeholder="admin@example.com" required>
                             </div>
                             <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>
 
                         <!-- Password Field -->
-                        <div class="form-group mb-4">
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input asp-for="Password" type="password"
-                                       class="form-control form-control-user"
-                                       placeholder="Password"
-                                       autocomplete="current-password"
-                                       disabled="@isLockedOut" />
-                                <button type="button" class="btn btn-outline-secondary toggle-password">
-                                    <i class="fas fa-eye"></i>
+                                <span class="input-group-text">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+                                <input asp-for="Password" type="password" class="form-control form-control-lg"
+                                       placeholder="••••••••" required>
+                                <button class="btn btn-outline-secondary toggle-password" type="button">
+                                    <i class="bi bi-eye"></i>
                                 </button>
                             </div>
                             <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
 
                         <!-- Remember Me -->
-                        <div class="form-group mb-4">
-                            <div class="custom-control custom-checkbox">
-                                <input asp-for="RememberMe" type="checkbox"
-                                       class="custom-control-input" id="customCheck"
-                                       disabled="@isLockedOut">
-                                <label class="custom-control-label" for="customCheck">
-                                    Remember Me
-                                </label>
-                            </div>
+                        <div class="mb-3 form-check">
+                            <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                <i class="bi bi-check2-square me-1"></i> Remember me
+                            </label>
                         </div>
 
-                        <!-- Submit Button -->
-                        <button type="submit" class="btn btn-primary btn-user btn-block mb-3"
-                                disabled="@isLockedOut">
-                            <i class="fas fa-sign-in-alt"></i> Login
-                        </button>
+                        <!-- Login Button -->
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg py-2">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
+                            </button>
+                        </div>
 
-                        <!-- Additional Links -->
+                        <!-- Links -->
                         <div class="text-center small">
-                            <a class="d-block mb-2" asp-action="ForgotPassword">Forgot Password?</a>
-                            @if (!isLockedOut)
-                            {
-                                <div class="d-flex justify-content-between">
-                                    <a asp-action="Register" asp-controller="Account" class="text-primary">Create an Account</a>
-                                    <span class="text-muted">v@(System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version)</span>
-                                </div>
-                            }
+                            <a href="#" class="text-decoration-none me-3">
+                                <i class="bi bi-question-circle"></i> Help
+                            </a>
+                            <a href="#" class="text-decoration-none">
+                                <i class="bi bi-shield-lock"></i> Forgot Password?
+                            </a>
                         </div>
                     </form>
                 </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <i class="bi bi-c-circle"></i> @DateTime.Now.Year Your Company
+                </p>
             </div>
         </div>
     </div>
@@ -112,38 +93,20 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            // Toggle password visibility
-            $('.toggle-password').click(function() {
-                const input = $(this).siblings('input');
-                const icon = $(this).find('i');
+        // Toggle password visibility
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', () => {
+                const input = button.parentNode.querySelector('input');
+                const icon = button.querySelector('i');
 
-                if (input.attr('type') === 'password') {
-                    input.attr('type', 'text');
-                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.replace('bi-eye', 'bi-eye-slash');
                 } else {
-                    input.attr('type', 'password');
-                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                    input.type = 'password';
+                    icon.classList.replace('bi-eye-slash', 'bi-eye');
                 }
             });
-
-            // Add delay for failed attempts
-        @if (loginAttempts > 0)
-        {
-            <text>
-                    $('#loginForm').submit(function() {
-                        const attempts = @loginAttempts;
-                        if (attempts >= 3) {
-                            $(this).find('button[type="submit"]')
-                                   .html('<i class="fas fa-spinner fa-spin"></i> Processing...')
-                                   .prop('disabled', true);
-                            setTimeout(() => {
-                                $(this).find('button[type="submit"]').prop('disabled', false);
-                            }, @(loginAttempts * 1000));
-                        }
-                    });
-            </text>
-        }
         });
     </script>
 }
