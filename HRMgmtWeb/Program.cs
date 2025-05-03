@@ -19,12 +19,17 @@ builder.Services.AddScoped<ISuperAdminService, SuperAdminService>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
-//builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 // Add Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(20); // Session timeout
+    options.Cookie.HttpOnly = true; // Secure cookie
+    options.Cookie.IsEssential = true; // GDPR compliance
+});
 
 builder.Services.AddTransient<IStartupFilter, SuperAdminStartupFilter>();
 
@@ -40,6 +45,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseSession();
 
 //app.UseAuthentication();
 app.UseAuthorization();
