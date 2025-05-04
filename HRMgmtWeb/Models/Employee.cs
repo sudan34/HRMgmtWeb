@@ -1,5 +1,6 @@
 ﻿using HRMgmtWeb.Models.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HRMgmtWeb.Models
 {
@@ -29,7 +30,10 @@ namespace HRMgmtWeb.Models
         [DataType(DataType.Date)]
         public DateTime JoinDate { get; set; } = DateTime.UtcNow;
 
+        [ForeignKey("Department")]
         public int DepartmentId { get; set; }
+
+        public virtual Department Department { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -44,5 +48,9 @@ namespace HRMgmtWeb.Models
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime? ModifiedDate { get; set; }
+
+        //public EmploymentStatus Status { get; set; } = EmploymentStatus.Active;
+
+        // Navigation property
     }
 }

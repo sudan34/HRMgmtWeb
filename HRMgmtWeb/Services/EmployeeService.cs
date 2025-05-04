@@ -12,15 +12,42 @@ namespace HRMgmtWeb.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly ApplicationDbContext _context;
 
-        public EmployeeService(IEmployeeRepository employeeRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository, ApplicationDbContext context)
         {
             _employeeRepository = employeeRepository;
+            _context = context;
         }
 
-        public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
+        // Implement all interface methods:
+
+        public async Task<List<Employee>> GetAllEmployeesAsync(
+            Expression<Func<Employee, bool>> filter = null,
+            Func<IQueryable<Employee>, IOrderedQueryable<Employee>> orderBy = null,
+            string includeProperties = "")
         {
-            return await _employeeRepository.GetAllAsync();
+            IQueryable<Employee> query = _context.Employees;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (orderBy != null)
+            {
+                return await orderBy(query).ToListAsync();
+            }
+            else
+            {
+                return await query.ToListAsync();
+            }
         }
 
         public async Task<Employee> GetEmployeeByIdAsync(int id)
@@ -77,6 +104,22 @@ namespace HRMgmtWeb.Services
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
             return employee != null;
+        }
+
+        public async Task<List<Employee>> SearchEmployeesAsync(string searchString)
+        {
+            return await _context.Employees
+                .Where(e => e.FirstName.Contains(searchString) ||
+                           e.LastName.Contains(searchString) ||
+                           e.Email.Contains(searchString) ||
+                           e.Position.Contains(searchString))
+                .ToListAsync();
+        }
+
+        public async Task<int> GetActiveEmployeeCountAsync()
+        {
+            return await _context.Employees
+                .CountAsync(e => e.Status == EmploymentStatus.Active);
         }
     }
 }

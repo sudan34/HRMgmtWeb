@@ -1,17 +1,22 @@
-﻿using HRMgmtWeb.Models;
+﻿using HRMgmtWeb.Data;
+using HRMgmtWeb.Models;
 using HRMgmtWeb.Models.ViewModels;
 using HRMgmtWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.Entity;
 using System.Linq.Expressions;
 
 namespace HRMgmtWeb.Controllers
 {
     public class EmployeeController : Controller
     {
+        private readonly ApplicationDbContext _context;
         private readonly IEmployeeService _employeeService;
 
-        public EmployeeController(IEmployeeService employeeService)
+     
+        public EmployeeController(ApplicationDbContext context, IEmployeeService employeeService)
         {
+            _context = context;
             _employeeService = employeeService;
         }
 
@@ -23,8 +28,12 @@ namespace HRMgmtWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // Load departments for dropdown
+            var departments = await _context.Departments.ToListAsync();
+            ViewBag.Departments = departments;
+
             return View();
         }
 

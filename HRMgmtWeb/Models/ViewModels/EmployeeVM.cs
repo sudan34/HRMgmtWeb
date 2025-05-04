@@ -45,5 +45,6 @@ namespace HRMgmtWeb.Models.ViewModels
         public string PhoneNumber { get; set; }
 
         public string Address { get; set; }
+
     }
 }

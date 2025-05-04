@@ -1,6 +1,6 @@
-﻿using HRMgmtWeb.Data.Interfaces;
+﻿using Dapper;
+using HRMgmtWeb.Data.Interfaces;
 using HRMgmtWeb.Models;
-using HRMgmtWeb.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
