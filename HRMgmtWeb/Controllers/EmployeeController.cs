@@ -1,10 +1,9 @@
 ﻿using HRMgmtWeb.Data;
-using HRMgmtWeb.Models;
 using HRMgmtWeb.Models.ViewModels;
 using HRMgmtWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.Entity;
-using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace HRMgmtWeb.Controllers
 {
@@ -30,11 +29,21 @@ namespace HRMgmtWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            // Load departments for dropdown
-            var departments = await _context.Departments.ToListAsync();
-            ViewBag.Departments = departments;
+            try
+            {
+                // Ensure proper async execution
+                var departments = await _context.Departments
+                    .AsNoTracking() // Recommended for dropdown lists
+                    .ToListAsync(); // Make sure to use ToListAsync()
 
-            return View();
+                ViewBag.Departments = new SelectList(departments, "Id", "Name");
+                return View();
+            }
+            catch (Exception ex)
+            {
+                // Log the error (implement proper logging in your application)
+                return StatusCode(500, "Error loading departments");
+            }
         }
 
         [HttpPost]

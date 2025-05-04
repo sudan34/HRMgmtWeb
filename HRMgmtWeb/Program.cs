@@ -16,49 +16,77 @@ builder.Services.AddControllersWithViews();
 // Add configuration binding
 builder.Services.Configure<SuperAdminConfig>(builder.Configuration.GetSection("SuperAdmin"));
 
+// Database Configuration
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString,
+        sqlOptions => sqlOptions.EnableRetryOnFailure()));
+
+// Add Identity with proper configuration
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    // Password settings
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+
+    // Lockout settings
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+
+    // User settings
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
 // Add SuperAdmin service
 builder.Services.AddScoped<ISuperAdminService, SuperAdminService>();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-
-// Add Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
-
+// Session Configuration
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(20); // Session timeout
-    options.Cookie.HttpOnly = true; // Secure cookie
-    options.Cookie.IsEssential = true; // GDPR compliance
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
-builder.Services.AddTransient<IStartupFilter, SuperAdminStartupFilter>();
-
+// Application Services
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<IEmployeeRepository, HRMgmtWeb.Data.Repositories.EmployeeRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+// Uncomment when ready to use
+// builder.Services.AddTransient<IStartupFilter, SuperAdminStartupFilter>();
 
 var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
+
+// IMPORTANT: Authentication must come before Authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseSession();
 
-//app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapStaticAssets();
-
-// Add these routes before the default route
+// Map controllers
 app.MapControllerRoute(
     name: "account",
     pattern: "Account/{action=Login}",
@@ -66,8 +94,6 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
