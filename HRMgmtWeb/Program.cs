@@ -23,7 +23,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
 // Add Identity with proper configuration
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     // Password settings
     options.Password.RequireDigit = true;
@@ -43,6 +43,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.Configure<SuperAdminConfig>(builder.Configuration.GetSection("SuperAdmin"));
 // Add SuperAdmin service
 builder.Services.AddScoped<ISuperAdminService, SuperAdminService>();
 
@@ -63,6 +64,21 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 // builder.Services.AddTransient<IStartupFilter, SuperAdminStartupFilter>();
 
 var app = builder.Build();
+
+// Initialize SuperAdmin
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        await SuperAdminInitializer.Initialize(services, builder.Configuration);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the SuperAdmin.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

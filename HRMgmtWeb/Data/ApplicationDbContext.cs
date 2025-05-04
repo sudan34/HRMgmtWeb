@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HRMgmtWeb.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>  // Inherit from IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -14,12 +14,20 @@ namespace HRMgmtWeb.Data
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<LeaveRequest> LeaveRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); // This line is CRUCIAL for Identity
+            base.OnModelCreating(modelBuilder);
 
-            // Configure your custom entities
+            // Configure ApplicationUser
+            modelBuilder.Entity<ApplicationUser>(entity =>
+            {
+                entity.Property(e => e.FirstName).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.LastName).IsRequired().HasMaxLength(50);
+            });
+
+            // Keep your existing configurations
             modelBuilder.Entity<Department>(entity =>
             {
                 entity.HasKey(d => d.Id);
@@ -35,12 +43,12 @@ namespace HRMgmtWeb.Data
             });
 
             // Optional: Customize Identity table names
-            modelBuilder.Entity<IdentityUser>(b => b.ToTable("Users"));
+            modelBuilder.Entity<ApplicationUser>(b => b.ToTable("Users"));
             modelBuilder.Entity<IdentityUserClaim<string>>(b => b.ToTable("UserClaims"));
             modelBuilder.Entity<IdentityUserLogin<string>>(b =>
             {
                 b.ToTable("UserLogins");
-                b.HasKey(l => new { l.LoginProvider, l.ProviderKey }); // Composite key
+                b.HasKey(l => new { l.LoginProvider, l.ProviderKey });
             });
             modelBuilder.Entity<IdentityUserToken<string>>(b =>
             {

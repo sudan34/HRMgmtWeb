@@ -1,4 +1,6 @@
-﻿@{
+﻿@using HRMgmtWeb.Models.Enums
+@model HRMgmtWeb.Models.ViewModels.DashboardViewModel
+@{
     ViewData["Title"] = "HR Dashboard";
 }
 
@@ -31,7 +33,7 @@
                     </span>
                     <div class="info-box-content">
                         <span class="info-box-text">Total Employees</span>
-                        <span class="info-box-number">247</span>
+                        <span class="info-box-number">@Model.TotalEmployees</span>
                     </div>
                 </div>
             </div>
@@ -42,8 +44,8 @@
                         <i class="bi bi-calendar-check"></i>
                     </span>
                     <div class="info-box-content">
-                        <span class="info-box-text">Present Today</span>
-                        <span class="info-box-number">215</span>
+                        <span class="info-box-text">Active Employees</span>
+                        <span class="info-box-number">@Model.ActiveEmployees</span>
                     </div>
                 </div>
             </div>
@@ -55,7 +57,7 @@
                     </span>
                     <div class="info-box-content">
                         <span class="info-box-text">On Leave</span>
-                        <span class="info-box-number">22</span>
+                        <span class="info-box-number">@Model.OnLeaveEmployees</span>
                     </div>
                 </div>
             </div>
@@ -67,7 +69,7 @@
                     </span>
                     <div class="info-box-content">
                         <span class="info-box-text">Open Requests</span>
-                        <span class="info-box-number">14</span>
+                        <span class="info-box-number">@Model.OpenRequests</span>
                     </div>
                 </div>
             </div>
@@ -100,47 +102,38 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>John Smith</td>
-                                        <td>Software Developer</td>
-                                        <td>IT</td>
-                                        <td>2023-05-15</td>
-                                        <td><span class="badge text-bg-success">Active</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sarah Johnson</td>
-                                        <td>HR Specialist</td>
-                                        <td>Human Resources</td>
-                                        <td>2023-06-01</td>
-                                        <td><span class="badge text-bg-success">Active</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Michael Chen</td>
-                                        <td>Accountant</td>
-                                        <td>Finance</td>
-                                        <td>2023-06-10</td>
-                                        <td><span class="badge text-bg-warning">Probation</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Emily Wilson</td>
-                                        <td>Marketing Manager</td>
-                                        <td>Marketing</td>
-                                        <td>2023-06-15</td>
-                                        <td><span class="badge text-bg-success">Active</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>David Brown</td>
-                                        <td>Sales Executive</td>
-                                        <td>Sales</td>
-                                        <td>2023-06-20</td>
-                                        <td><span class="badge text-bg-warning">Probation</span></td>
-                                    </tr>
+                                    @foreach (var employee in Model.RecentHires)
+                                    {
+                                        <tr>
+                                            <td>@employee.FirstName @employee.LastName</td>
+                                            <td>@employee.Position</td>
+                                            <td>@employee.Department?.Name</td>
+                                            <td>@employee.JoinDate.ToString("yyyy-MM-dd")</td>
+                                            <td>
+                                                @switch (employee.Status)
+                                                {
+                                                    case EmploymentStatus.Active:
+                                                        <span class="badge text-bg-success">Active</span>
+                                                        break;
+                                                    case EmploymentStatus.OnLeave:
+                                                        <span class="badge text-bg-warning">On Leave</span>
+                                                        break;
+                                                    case EmploymentStatus.Probation:
+                                                        <span class="badge text-bg-info">Probation</span>
+                                                        break;
+                                                    case EmploymentStatus.Terminated:
+                                                        <span class="badge text-bg-danger">Terminated</span>
+                                                        break;
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div class="card-footer clearfix">
-                        <a href="@Url.Action("Index", "Employees")" class="btn btn-sm btn-primary float-end">
+                        <a href="@Url.Action("Index", "Employee")" class="btn btn-sm btn-primary float-end">
                             View All Employees
                         </a>
                     </div>
@@ -209,11 +202,13 @@
 
 @section Scripts {
     <script>
-        // Any page-specific scripts can go here
         $(document).ready(function() {
-            // Example: Make table rows clickable
+            // Make table rows clickable (if you add data-href attributes)
             $('table.table tbody tr').click(function() {
-                window.location = $(this).data('href');
+                var href = $(this).data('href');
+                if (href) {
+                    window.location = href;
+                }
             });
         });
     </script>

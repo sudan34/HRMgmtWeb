@@ -1,6 +1,7 @@
 ﻿using HRMgmtWeb.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace HRMgmtWeb.Services
 {
@@ -8,14 +9,15 @@ namespace HRMgmtWeb.Services
     {
         Task EnsureSuperAdminCreatedAsync();
     }
+
     public class SuperAdminService : ISuperAdminService
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SuperAdminConfig _superAdminConfig;
 
         public SuperAdminService(
-            UserManager<IdentityUser> userManager,
+            UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IOptions<SuperAdminConfig> superAdminConfig)
         {
@@ -37,12 +39,15 @@ namespace HRMgmtWeb.Services
 
             if (superAdmin == null)
             {
-                superAdmin = new IdentityUser
+                superAdmin = new ApplicationUser
                 {
                     UserName = _superAdminConfig.UserName,
                     Email = _superAdminConfig.Email,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    FirstName = _superAdminConfig.FirstName,
+                    LastName = _superAdminConfig.LastName
                 };
+
                 var result = await _userManager.CreateAsync(superAdmin, _superAdminConfig.Password);
 
                 if (result.Succeeded)
@@ -52,13 +57,23 @@ namespace HRMgmtWeb.Services
                     // Add claims if needed
                     await _userManager.AddClaimsAsync(superAdmin, new[]
                     {
-                        new System.Security.Claims.Claim("FirstName", _superAdminConfig.FirstName),
-                        new System.Security.Claims.Claim("LastName", _superAdminConfig.LastName),
-                        new System.Security.Claims.Claim("FullName", $"{_superAdminConfig.FirstName} {_superAdminConfig.LastName}")
+                        new Claim(ClaimTypes.GivenName, _superAdminConfig.FirstName),
+                        new Claim(ClaimTypes.Surname, _superAdminConfig.LastName),
+                        new Claim(ClaimTypes.Name, $"{_superAdminConfig.FirstName} {_superAdminConfig.LastName}")
                     });
                 }
             }
-
+            else
+            {
+                // Update existing super admin if needed
+                if (superAdmin.FirstName != _superAdminConfig.FirstName ||
+                    superAdmin.LastName != _superAdminConfig.LastName)
+                {
+                    superAdmin.FirstName = _superAdminConfig.FirstName;
+                    superAdmin.LastName = _superAdminConfig.LastName;
+                    await _userManager.UpdateAsync(superAdmin);
+                }
+            }
         }
     }
 }

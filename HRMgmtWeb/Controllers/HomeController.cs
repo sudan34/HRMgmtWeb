@@ -1,21 +1,42 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using HRMgmtWeb.Models;
+using HRMgmtWeb.Data;
+using Microsoft.EntityFrameworkCore;
+using HRMgmtWeb.Models.ViewModels;
+using HRMgmtWeb.Models.Enums;
 
 namespace HRMgmtWeb.Controllers;
 
 public class HomeController : Controller
 {
+    private readonly ApplicationDbContext _context;
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
     {
         _logger = logger;
+        _context = context;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var dashboardData = new DashboardViewModel
+        {
+            TotalEmployees = await _context.Employees.CountAsync(),
+            ActiveEmployees = await _context.Employees
+                    .CountAsync(e => e.Status == EmploymentStatus.Active),
+            OnLeaveEmployees = await _context.Employees
+                    .CountAsync(e => e.Status == EmploymentStatus.OnLeave),
+            RecentHires = await _context.Employees
+                    .Include(e => e.Department)
+                    .OrderByDescending(e => e.JoinDate)
+                    .Take(5)
+                    .ToListAsync(),
+            OpenRequests = 0 
+        };
+
+        return View(dashboardData);
     }
 
     public IActionResult Privacy()

@@ -1,4 +1,5 @@
-﻿using HRMgmtWeb.Models.ViewModels;
+﻿using HRMgmtWeb.Models;
+using HRMgmtWeb.Models.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,15 +8,18 @@ namespace HRMgmtWeb.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(
-            SignInManager<IdentityUser> signInManager,
-            ILogger<AccountController> logger)
+            SignInManager<ApplicationUser> signInManager,
+            ILogger<AccountController> logger,
+            UserManager<ApplicationUser> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -51,6 +55,16 @@ namespace HRMgmtWeb.Controllers
                 {
                     HttpContext.Session.Remove("LoginAttempts");
                     _logger.LogInformation("User logged in.");
+
+                    // Check if user is active
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    if (user == null || !user.IsActive)
+                    {
+                        await _signInManager.SignOutAsync();
+                        ModelState.AddModelError(string.Empty, "Your account is deactivated.");
+                        return View(model);
+                    }
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
