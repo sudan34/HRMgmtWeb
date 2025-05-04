@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;  
+﻿using HRMgmtWeb.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;  
 using Microsoft.EntityFrameworkCore;
 
 namespace HRMgmtWeb.Data
