@@ -10,26 +10,39 @@
     var loginAttempts = HttpContextAccessor.HttpContext?.Session.GetInt32("LoginAttempts") ?? 0;
     var isLockedOut = HttpContextAccessor.HttpContext?.Session.GetString("AccountLocked") == "true";
 }
+
 <div class="container">
     <div class="row justify-content-center min-vh-100 align-items-center">
-        <div class="col-md-8 col-lg-6 col-xl-5">
-            <div class="card shadow border-0">
-                <div class="card-body p-4 p-md-5">
-                    <!-- Header -->
-                    <div class="text-center mb-4">
+        <div class="col-xl-5 col-lg-6 col-md-8 col-sm-10">
+            <div class="card login-card">
+                <!-- Header -->
+                <div class="login-header">
+                    <div class="mb-3">
                         <i class="bi bi-person-badge text-primary" style="font-size: 2.5rem;"></i>
-                        <h2 class="h3 mt-3 mb-1 fw-bold">HR Portal</h2>
-                        <p class="text-muted">Super Admin Login</p>
                     </div>
+                    <h2 class="h4 mb-1 fw-bold">HR Portal</h2>
+                    <p class="text-muted small">Super Admin Login</p>
+                </div>
 
-                    <!-- Login Form -->
+                <!-- Body -->
+                <div class="login-body">
+                    @if (isLockedOut)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Your account has been temporarily locked due to multiple failed login attempts. Please try again later.
+                        </div>
+                    }
+
                     <form method="post">
+                        @Html.AntiForgeryToken()
+
                         <!-- Email Field -->
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
+                            <label for="Email" class="form-label">Email Address</label>
                             <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-envelope"></i>
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-envelope text-muted"></i>
                                 </span>
                                 <input asp-for="Email" type="email" class="form-control form-control-lg"
                                        placeholder="admin@example.com" required>
@@ -39,10 +52,10 @@
 
                         <!-- Password Field -->
                         <div class="mb-3">
-                            <label class="form-label">Password</label>
+                            <label for="Password" class="form-label">Password</label>
                             <div class="input-group">
-                                <span class="input-group-text">
-                                    <i class="bi bi-lock"></i>
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-lock text-muted"></i>
                                 </span>
                                 <input asp-for="Password" type="password" class="form-control form-control-lg"
                                        placeholder="••••••••" required>
@@ -53,39 +66,37 @@
                             <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
 
-                        <!-- Remember Me -->
-                        <div class="mb-3 form-check">
-                            <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMe">
-                            <label class="form-check-label" for="rememberMe">
-                                <i class="bi bi-check2-square me-1"></i> Remember me
-                            </label>
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label small" for="rememberMe">
+                                    Remember me
+                                </label>
+                            </div>
+                            <div>
+                                <a href="#" class="small text-decoration-none">Forgot password?</a>
+                            </div>
                         </div>
 
                         <!-- Login Button -->
                         <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg py-2">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold" @(isLockedOut ? "disabled" : "")>
                                 <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
                             </button>
                         </div>
 
-                        <!-- Links -->
-                        <div class="text-center small">
-                            <a href="#" class="text-decoration-none me-3">
-                                <i class="bi bi-question-circle"></i> Help
-                            </a>
-                            <a href="#" class="text-decoration-none">
-                                <i class="bi bi-shield-lock"></i> Forgot Password?
-                            </a>
-                        </div>
+                        <!-- Validation Summary -->
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger small"></div>
                     </form>
                 </div>
-            </div>
 
-            <!-- Footer -->
-            <div class="text-center mt-4">
-                <p class="text-muted small">
-                    <i class="bi bi-c-circle"></i> @DateTime.Now.Year Your Company
-                </p>
+                <!-- Footer -->
+                <div class="card-footer text-center py-3 bg-light">
+                    <p class="text-muted small mb-0">
+                        <i class="bi bi-c-circle"></i> @DateTime.Now.Year Your Company. All rights reserved.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -93,19 +104,26 @@
 
 @section Scripts {
     <script>
-        // Toggle password visibility
-        document.querySelectorAll('.toggle-password').forEach(button => {
-            button.addEventListener('click', () => {
-                const input = button.parentNode.querySelector('input');
-                const icon = button.querySelector('i');
+        $(document).ready(function() {
+            // Toggle password visibility
+            $('.toggle-password').click(function() {
+                const input = $(this).siblings('input');
+                const icon = $(this).find('i');
 
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.replace('bi-eye', 'bi-eye-slash');
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
                 } else {
-                    input.type = 'password';
-                    icon.classList.replace('bi-eye-slash', 'bi-eye');
+                    input.attr('type', 'password');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
                 }
+            });
+
+            // Add animation to form elements
+            $('input').each(function(index) {
+                $(this).delay(100 * index).queue(function() {
+                    $(this).addClass('animate__animated animate__fadeIn');
+                });
             });
         });
     </script>
