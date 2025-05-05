@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Add configuration binding
-builder.Services.Configure<SuperAdminConfig>(builder.Configuration.GetSection("SuperAdmin"));
+//builder.Services.Configure<SuperAdminConfig>(builder.Configuration.GetSection("SuperAdmin"));
 
 // Database Configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -43,9 +43,25 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-builder.Services.Configure<SuperAdminConfig>(builder.Configuration.GetSection("SuperAdmin"));
+// Configure authorization policies
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SuperAdminPolicy", policy =>
+        policy.RequireRole("SuperAdmin"));
+
+    options.AddPolicy("AdminPolicy", policy =>
+        policy.RequireRole("Admin", "SuperAdmin"));
+
+    options.AddPolicy("HRPolicy", policy =>
+        policy.RequireRole("HR", "Admin", "SuperAdmin"));
+
+    options.AddPolicy("EmployeePolicy", policy =>
+        policy.RequireRole("Employee"));
+});
+
+//builder.Services.Configure<SuperAdminConfig>(builder.Configuration.GetSection("SuperAdmin"));
 // Add SuperAdmin service
-builder.Services.AddScoped<ISuperAdminService, SuperAdminService>();
+//builder.Services.AddScoped<ISuperAdminService, SuperAdminService>();
 
 // Session Configuration
 builder.Services.AddSession(options =>
@@ -55,6 +71,10 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
+
+// Register application services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 
 // Application Services
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
@@ -72,14 +92,47 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        await SuperAdminInitializer.Initialize(services, builder.Configuration);
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+
+        // Create roles if they don't exist
+        string[] roleNames = { "SuperAdmin", "Admin", "HR", "Employee" };
+        foreach (var roleName in roleNames)
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+        }
+
+        // Create initial admin user if not exists
+        var adminEmail = "admin@gmail.com";
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        if (adminUser == null)
+        {
+            adminUser = new ApplicationUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                FirstName = "System",
+                LastName = "Admin",
+                EmailConfirmed = true
+            };
+
+            var createResult = await userManager.CreateAsync(adminUser, "Admin@1234");
+            if (createResult.Succeeded)
+            {
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
+        }
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the SuperAdmin.");
+        logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -87,10 +140,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-else
-{
-    app.UseDeveloperExceptionPage();
-}
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -104,10 +154,10 @@ app.UseAuthorization();
 app.UseSession();
 
 // Map controllers
+// Map routes
 app.MapControllerRoute(
-    name: "account",
-    pattern: "Account/{action=Login}",
-    defaults: new { controller = "Account" });
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace HRMgmtWeb.Controllers
+namespace HRMgmtWeb.Areas.Admin.Controllers
 {
     public class DepartmentController : Controller
     {

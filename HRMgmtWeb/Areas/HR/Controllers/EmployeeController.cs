@@ -1,12 +1,15 @@
 ﻿using HRMgmtWeb.Data;
 using HRMgmtWeb.Models.ViewModels;
 using HRMgmtWeb.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
-namespace HRMgmtWeb.Controllers
+namespace HRMgmtWeb.Areas.HR.Controllers
 {
+    [Area("HR")]
+    [Authorize(Roles = "HR")]
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;

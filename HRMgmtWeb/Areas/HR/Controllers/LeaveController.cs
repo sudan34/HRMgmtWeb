@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace HRMgmtWeb.Controllers
+namespace HRMgmtWeb.Areas.HR.Controllers
 {
     public class LeaveController : Controller
     {
