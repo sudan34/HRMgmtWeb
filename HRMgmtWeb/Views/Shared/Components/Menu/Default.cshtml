@@ -1,0 +1,42 @@
+﻿@model IEnumerable<HRMgmtWeb.Models.Menu>
+
+<ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
+    @foreach (var menuItem in Model)
+    {
+        bool hasChildren = menuItem.Children?.Any() == true;
+        string url = string.IsNullOrEmpty(menuItem.Url) ? "#" : menuItem.Url;
+        string linkClasses = hasChildren ? "nav-link has-arrow" : "nav-link";
+        string itemClasses = hasChildren ? "nav-item has-treeview" : "nav-item";
+
+        <li class="@itemClasses">
+            <a href="@url" class="@linkClasses">
+                @if (!string.IsNullOrEmpty(menuItem.IconClass))
+                {
+                    <i class="nav-icon @menuItem.IconClass"></i>
+                }
+                <p>
+                    @menuItem.Title
+                    @if (hasChildren)
+                    {
+                        <i class="nav-arrow bi bi-chevron-right"></i>
+                    }
+                </p>
+            </a>
+
+            @if (hasChildren)
+            {
+                <ul class="nav nav-treeview">
+                    @foreach (var child in menuItem.Children.OrderBy(c => c.Order))
+                    {
+                        <li class="nav-item">
+                            <a href="@child.Url" class="nav-link">
+                                <i class="nav-icon @child.IconClass"></i>
+                                <p>@child.Title</p>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </li>
+    }
+</ul>

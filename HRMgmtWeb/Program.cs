@@ -59,6 +59,7 @@ builder.Services.AddSession(options =>
 // Application Services
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IMenuService, MenuService>();
 
 // Uncomment when ready to use
 // builder.Services.AddTransient<IStartupFilter, SuperAdminStartupFilter>();
