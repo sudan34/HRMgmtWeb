@@ -2,10 +2,9 @@
 @model HRMgmtWeb.Models.ViewModels.EmployeeVM
 @{
     ViewData["Title"] = "Add New Employee";
-    Layout = "_Layout"; // This should match your layout file name
+    Layout = "_Layout";
 }
 
-<!-- Content Header (Page header) -->
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -23,7 +22,6 @@
     </div>
 </div>
 
-<!-- Main content -->
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -32,12 +30,11 @@
                     <div class="card-header">
                         <h3 class="card-title">Employee Details</h3>
                     </div>
-                    <form asp-action="Create" class="needs-validation" novalidate>
+                    <form asp-action="Create" class="needs-validation" novalidate method="post">
                         <div class="card-body">
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                             <div class="row">
-                                <!-- Personal Info Column -->
                                 <div class="col-md-6">
                                     <h5 class="border-bottom pb-2 mb-3">Personal Information</h5>
 
@@ -77,13 +74,12 @@
                                     </div>
                                 </div>
 
-                                <!-- Employment Info Column -->
                                 <div class="col-md-6">
                                     <h5 class="border-bottom pb-2 mb-3">Employment Information</h5>
 
                                     <div class="form-group mb-3">
                                         <label asp-for="DepartmentId" class="form-label"></label>
-                                        <select asp-for="DepartmentId" asp-items="@ViewBag.Departments" class="form-select">
+                                        <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-select">
                                             <option value="">-- Select Department --</option>
                                         </select>
                                         <span asp-validation-for="DepartmentId" class="text-danger"></span>
@@ -103,14 +99,12 @@
 
                                     <div class="form-group mb-3">
                                         <label asp-for="Status" class="form-label"></label>
-                                        <select asp-for="Status" asp-items="Html.GetEnumSelectList<EmploymentStatus>()"
-                                                class="form-select"></select>
+                                        <select asp-for="Status" asp-items="Html.GetEnumSelectList<EmploymentStatus>()" class="form-select"></select>
                                         <span asp-validation-for="Status" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Contact Info Section -->
                             <h5 class="border-bottom pb-2 mt-4 mb-3">Contact Information</h5>
                             <div class="row">
                                 <div class="col-md-6">
@@ -145,30 +139,21 @@
 </section>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
-        // Client-side validation
         (function () {
-            'use strict'
-
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.querySelectorAll('.needs-validation')
-
-            // Loop over them and prevent submission
-            Array.prototype.slice.call(forms)
-                .forEach(function (form) {
-                    form.addEventListener('submit', function (event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault()
-                            event.stopPropagation()
-                        }
-
-                        form.classList.add('was-validated')
-                    }, false)
-                })
-        })()
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
     </script>
 }

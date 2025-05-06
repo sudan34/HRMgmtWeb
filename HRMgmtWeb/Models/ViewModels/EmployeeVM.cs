@@ -1,4 +1,5 @@
 ﻿using HRMgmtWeb.Models.Enums;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace HRMgmtWeb.Models.ViewModels
@@ -45,6 +46,8 @@ namespace HRMgmtWeb.Models.ViewModels
         public string PhoneNumber { get; set; }
 
         public string Address { get; set; }
+
+        public IEnumerable<SelectListItem> DepartmentList { get; set; }
 
     }
 }

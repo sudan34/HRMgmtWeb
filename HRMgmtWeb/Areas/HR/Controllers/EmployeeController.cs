@@ -39,7 +39,16 @@ namespace HRMgmtWeb.Areas.HR.Controllers
                     .AsNoTracking() // Recommended for dropdown lists
                     .ToListAsync(); // Make sure to use ToListAsync()
 
-                ViewBag.Departments = new SelectList(departments, "Id", "Name");
+                var model = new EmployeeVM
+                {
+                    DepartmentList = departments.Select(d => new SelectListItem
+                    {
+                        Value = d.Id.ToString(),
+                        Text = d.Name
+                    })
+                };
+
+                //ViewBag.Departments = new SelectList(departments, "Id", "Name");
                 return View();
             }
             catch (Exception ex)
@@ -58,6 +67,10 @@ namespace HRMgmtWeb.Areas.HR.Controllers
                 await _employeeService.CreateEmployeeAsync(model);
                 return RedirectToAction(nameof(Index));
             }
+            // If we got this far, something failed; repopulate departments
+            var departments = await _context.Departments.AsNoTracking().ToListAsync();
+            ViewBag.Departments = new SelectList(departments, "Id", "Name");
+
             return View(model);
         }
 
