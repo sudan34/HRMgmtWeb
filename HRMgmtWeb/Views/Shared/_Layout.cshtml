@@ -3,144 +3,47 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Employee Management System" />
-    <meta name="author" content="Your Company" />
-    <meta property="og:title" content="@ViewData["Title"]" />
-    <meta property="og:type" content="website" />
-    <!-- Content Security Policy -->
-    <!-- Replace your current CSP with this more permissive version for development -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://cdn.jsdelivr.net;">
-    @* <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; img-src 'self' data:;"> *@
-    <title>@ViewData["Title"] - EmployeeManagementWebApp</title>
+    <title>@ViewData["Title"] - HR Management</title>
+
+    <!-- Favicon -->
     <link rel="icon" href="~/favicon.ico" type="image/x-icon" />
 
-    <!-- Third Party Plugin(OverlayScrollbars) -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css"
-          integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg="
-          crossorigin="anonymous" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-    <!-- Third Party Plugin(Bootstrap Icons) -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-          integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
-          crossorigin="anonymous" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/lib/fontawesome-free/css/all.min.css" />
 
-    <!-- Required Plugin(AdminLTE) -->
-    <link rel="stylesheet" href="~/css/adminlte.css" asp-append-version="true" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
 </head>
-<body class="layout-fixed sidebar-expand-lg bg-body-tertiary" aria-live="polite" aria-atomic="true">
-    <div class="app-wrapper">
-        <partial name="_TopNavbar.cshtml" />
-        <partial name="_Sidebar.cshtml" />
+<body>
+    <div class="layout-wrapper">
+        <!-- Top Navigation -->
+        <partial name="_TopNavbar" />
 
-        <main role="main" class="pb-3" id="main-content" tabindex="-1">
-            @RenderBody()
+        <!-- Sidebar -->
+        <partial name="_Sidebar" />
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container-fluid px-4">
+                @RenderBody()
+            </div>
         </main>
-        <partial name="_Footer.cshtml" />
+
+        <!-- Footer -->
+        <partial name="_Footer" />
     </div>
 
-    <!-- JavaScript Libraries -->
+    <!-- jQuery & Bootstrap JS -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- OverlayScrollbars (removed duplicate) -->
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js"
-            integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ="
-            crossorigin="anonymous"></script>
-
-
-    <!-- AdminLTE -->
-    <script src="~/js/adminlte.js" asp-append-version="true"></script>
-
-    <!-- Initialize OverlayScrollbars -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
-            const Default = {
-                scrollbarTheme: 'os-theme-light',
-                scrollbarAutoHide: 'leave',
-                scrollbarClickScroll: true,
-            };
-
-            const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-            if (sidebarWrapper && typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== 'undefined') {
-                OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-                    scrollbars: {
-                        theme: Default.scrollbarTheme,
-                        autoHide: Default.scrollbarAutoHide,
-                        clickScroll: Default.scrollbarClickScroll,
-                    },
-                });
-            }
-        });
-    </script>
-
-    <!-- Theme Management -->
-    <script>
-        (() => {
-            'use strict';
-
-            const getPreferredTheme = () => {
-                const storedTheme = localStorage.getItem('theme');
-                if (storedTheme) return storedTheme;
-                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            };
-
-            const setTheme = (theme) => {
-                const isDark = (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) || theme === 'dark';
-                document.documentElement.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
-            };
-
-            const showActiveTheme = (theme) => {
-                const themeSwitcher = document.querySelector('#bd-theme');
-                if (!themeSwitcher) return;
-
-                const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`);
-                if (!btnToActive) return;
-
-                document.querySelectorAll('[data-bs-theme-value]').forEach(el => {
-                    el.classList.remove('active');
-                    el.setAttribute('aria-pressed', 'false');
-                });
-
-                btnToActive.classList.add('active');
-                btnToActive.setAttribute('aria-pressed', 'true');
-
-                const activeThemeIcon = document.querySelector('.theme-icon-active i');
-                if (activeThemeIcon) {
-                    activeThemeIcon.className = btnToActive.querySelector('i').className;
-                }
-            };
-
-            // Initialize
-            const initTheme = () => {
-                const theme = getPreferredTheme();
-                setTheme(theme);
-                showActiveTheme(theme);
-
-                document.querySelectorAll('[data-bs-theme-value]').forEach(toggle => {
-                    toggle.addEventListener('click', () => {
-                        const theme = toggle.getAttribute('data-bs-theme-value');
-                        localStorage.setItem('theme', theme);
-                        setTheme(theme);
-                        showActiveTheme(theme);
-                    });
-                });
-
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-                    const storedTheme = localStorage.getItem('theme');
-                    if (storedTheme !== 'light' && storedTheme !== 'dark') {
-                        setTheme(getPreferredTheme());
-                    }
-                });
-            };
-
-            document.addEventListener('DOMContentLoaded', initTheme);
-        })();
-    </script>
+    <!-- Custom JS -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

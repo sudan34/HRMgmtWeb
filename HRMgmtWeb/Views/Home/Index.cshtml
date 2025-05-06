@@ -4,12 +4,12 @@
     ViewData["Title"] = "HR Dashboard";
 }
 
-<!--begin::App Content Header-->
-<div class="app-content-header">
+<!-- Content Header -->
+<div class="content-header">
     <div class="container-fluid">
-        <div class="row">
+        <div class="row mb-2">
             <div class="col-sm-6">
-                <h3 class="mb-0">HR Dashboard</h3>
+                <h1 class="m-0">HR Dashboard</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
@@ -21,55 +21,71 @@
     </div>
 </div>
 
-<!--begin::App Content-->
-<div class="app-content">
+<!-- Main Content -->
+<div class="content">
     <div class="container-fluid">
         <!-- Employee Stats -->
         <div class="row">
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="info-box">
-                    <span class="info-box-icon text-bg-primary shadow-sm">
-                        <i class="bi bi-people-fill"></i>
-                    </span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Total Employees</span>
-                        <span class="info-box-number">@Model.TotalEmployees</span>
+            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title">Total Employees</h6>
+                                <h2 class="mb-0">@Model.TotalEmployees</h2>
+                            </div>
+                            <div class="icon-circle">
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="info-box">
-                    <span class="info-box-icon text-bg-success shadow-sm">
-                        <i class="bi bi-calendar-check"></i>
-                    </span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Active Employees</span>
-                        <span class="info-box-number">@Model.ActiveEmployees</span>
+            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title">Active Employees</h6>
+                                <h2 class="mb-0">@Model.ActiveEmployees</h2>
+                            </div>
+                            <div class="icon-circle">
+                                <i class="fas fa-user-check fa-2x"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="info-box">
-                    <span class="info-box-icon text-bg-warning shadow-sm">
-                        <i class="bi bi-clock-history"></i>
-                    </span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">On Leave</span>
-                        <span class="info-box-number">@Model.OnLeaveEmployees</span>
+            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title">On Leave</h6>
+                                <h2 class="mb-0">@Model.OnLeaveEmployees</h2>
+                            </div>
+                            <div class="icon-circle">
+                                <i class="fas fa-calendar-times fa-2x"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="info-box">
-                    <span class="info-box-icon text-bg-danger shadow-sm">
-                        <i class="bi bi-exclamation-triangle"></i>
-                    </span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Open Requests</span>
-                        <span class="info-box-number">@Model.OpenRequests</span>
+            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title">Open Requests</h6>
+                                <h2 class="mb-0">@Model.OpenRequests</h2>
+                            </div>
+                            <div class="icon-circle">
+                                <i class="fas fa-exclamation-triangle fa-2x"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,87 +94,86 @@
         <!-- Main Content Row -->
         <div class="row">
             <!-- Recent Hires Column -->
-            <div class="col-md-8">
+            <div class="col-lg-8">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Recent Hires</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
-                                <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
-                                <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
-                            </button>
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="card-title">Recent Hires</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-bs-toggle="collapse" data-bs-target="#recentHiresTable">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover m-0">
-                                <thead>
+                    <div class="card-body table-responsive p-0 collapse show" id="recentHiresTable">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>Department</th>
+                                    <th>Start Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var employee in Model.RecentHires)
+                                {
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Position</th>
-                                        <th>Department</th>
-                                        <th>Start Date</th>
-                                        <th>Status</th>
+                                        <td>@employee.FirstName @employee.LastName</td>
+                                        <td>@employee.Position</td>
+                                        <td>@employee.Department?.Name</td>
+                                        <td>@employee.JoinDate.ToString("yyyy-MM-dd")</td>
+                                        <td>
+                                            @switch (employee.Status)
+                                            {
+                                                case EmploymentStatus.Active:
+                                                    <span class="badge bg-success">Active</span>
+                                                    break;
+                                                case EmploymentStatus.OnLeave:
+                                                    <span class="badge bg-warning text-dark">On Leave</span>
+                                                    break;
+                                                case EmploymentStatus.Probation:
+                                                    <span class="badge bg-info">Probation</span>
+                                                    break;
+                                                case EmploymentStatus.Terminated:
+                                                    <span class="badge bg-danger">Terminated</span>
+                                                    break;
+                                            }
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var employee in Model.RecentHires)
-                                    {
-                                        <tr>
-                                            <td>@employee.FirstName @employee.LastName</td>
-                                            <td>@employee.Position</td>
-                                            <td>@employee.Department?.Name</td>
-                                            <td>@employee.JoinDate.ToString("yyyy-MM-dd")</td>
-                                            <td>
-                                                @switch (employee.Status)
-                                                {
-                                                    case EmploymentStatus.Active:
-                                                        <span class="badge text-bg-success">Active</span>
-                                                        break;
-                                                    case EmploymentStatus.OnLeave:
-                                                        <span class="badge text-bg-warning">On Leave</span>
-                                                        break;
-                                                    case EmploymentStatus.Probation:
-                                                        <span class="badge text-bg-info">Probation</span>
-                                                        break;
-                                                    case EmploymentStatus.Terminated:
-                                                        <span class="badge text-bg-danger">Terminated</span>
-                                                        break;
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                     <div class="card-footer clearfix">
                         <a href="@Url.Action("Index", "Employee")" class="btn btn-sm btn-primary float-end">
-                            View All Employees
+                            View All Employees <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
             </div>
 
             <!-- Quick Actions Column -->
-            <div class="col-md-4">
+            <div class="col-lg-4">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header border-0">
                         <h3 class="card-title">Quick Actions</h3>
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
-                            <a href="@Url.Action("Create", "Employee")" class="btn btn-primary">
-                                <i class="bi bi-person-plus"></i> Add New Employee
+                            <a href="@Url.Action("Create", "Employee")" class="btn btn-primary text-start">
+                                <i class="fas fa-user-plus me-2"></i> Add New Employee
                             </a>
-                            <a href="@Url.Action("Index", "LeaveRequests")" class="btn btn-success">
-                                <i class="bi bi-calendar-plus"></i> Process Leave Requests
+                            <a href="@Url.Action("Index", "LeaveRequests")" class="btn btn-success text-start">
+                                <i class="fas fa-calendar-check me-2"></i> Process Leave Requests
                             </a>
-                            <a href="@Url.Action("Index", "Payroll")" class="btn btn-info">
-                                <i class="bi bi-cash-stack"></i> Run Payroll
+                            <a href="@Url.Action("Index", "Payroll")" class="btn btn-info text-start">
+                                <i class="fas fa-money-bill-wave me-2"></i> Run Payroll
                             </a>
-                            <a href="@Url.Action("Index", "Reports")" class="btn btn-warning">
-                                <i class="bi bi-graph-up"></i> Generate Reports
+                            <a href="@Url.Action("Index", "Reports")" class="btn btn-warning text-start">
+                                <i class="fas fa-chart-bar me-2"></i> Generate Reports
                             </a>
                         </div>
                     </div>
@@ -166,33 +181,33 @@
 
                 <!-- Upcoming Events -->
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header border-0">
                         <h3 class="card-title">Upcoming Events</h3>
                     </div>
                     <div class="card-body p-0">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="mb-0">Quarterly Review Meeting</h6>
+                                    <h6 class="mb-1">Quarterly Review Meeting</h6>
                                     <small class="text-muted">Tomorrow, 10:00 AM</small>
                                 </div>
-                                <span class="badge text-bg-primary">Meeting</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="badge bg-primary">Meeting</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="mb-0">Payroll Processing</h6>
+                                    <h6 class="mb-1">Payroll Processing</h6>
                                     <small class="text-muted">In 3 days</small>
                                 </div>
-                                <span class="badge text-bg-success">Payroll</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success">Payroll</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h6 class="mb-0">New Hire Orientation</h6>
+                                    <h6 class="mb-1">New Hire Orientation</h6>
                                     <small class="text-muted">Next Monday, 9:00 AM</small>
                                 </div>
-                                <span class="badge text-bg-info">Training</span>
-                            </li>
-                        </ul>
+                                <span class="badge bg-info">Training</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -203,13 +218,13 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Make table rows clickable (if you add data-href attributes)
-            $('table.table tbody tr').click(function() {
-                var href = $(this).data('href');
-                if (href) {
-                    window.location = href;
-                }
+            // Make table rows clickable if they have data-href attribute
+            $('table.table tbody tr[data-href]').on('click', function() {
+                window.location.href = $(this).data('href');
             });
+
+            // Initialize tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
         });
     </script>
 }
