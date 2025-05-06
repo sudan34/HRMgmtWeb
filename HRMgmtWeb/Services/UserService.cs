@@ -32,9 +32,9 @@ namespace HRMgmtWeb.Services
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            if (result.Succeeded && model.Roles != null && model.Roles.Any())
+            if (result.Succeeded && model.SelectedRoles != null && model.SelectedRoles.Any())
             {
-                await _userManager.AddToRolesAsync(user, model.Roles);
+                await _userManager.AddToRolesAsync(user, model.SelectedRoles);
             }
 
             return result;

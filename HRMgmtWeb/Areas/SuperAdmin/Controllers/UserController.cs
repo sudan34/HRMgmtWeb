@@ -2,6 +2,7 @@
 using HRMgmtWeb.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HRMgmtWeb.Areas.SuperAdmin.Controllers
 {
@@ -42,9 +43,11 @@ namespace HRMgmtWeb.Areas.SuperAdmin.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            var roles = await _roleService.GetAllRolesAsync();
             var model = new UserCreateVM
             {
-                Roles = (await _roleService.GetAllRolesAsync()).Select(r => r.Name).ToList()
+                AllRoles = roles
+                //RoleOptions = new SelectList(roles, "Name", "Name")
             };
             return View(model);
         }
@@ -52,21 +55,28 @@ namespace HRMgmtWeb.Areas.SuperAdmin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(UserCreateVM model)
         {
+            var roles = await _roleService.GetAllRolesAsync();
+           // model.RoleOptions = new SelectList(roles, "Name", "Name");
+           
             if (ModelState.IsValid)
             {
-                var result = await _userService.CreateUserAsync(model);
-                if (result.Succeeded)
+                if (model.SelectedRoles == null || !model.SelectedRoles.Any())
                 {
-                    return RedirectToAction(nameof(Index));
+                    ModelState.AddModelError("Roles", "At least one role must be selected");
                 }
-                foreach (var error in result.Errors)
+                else
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    var result = await _userService.CreateUserAsync(model);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
-
-            // Reload roles if model is invalid
-            model.Roles = (await _roleService.GetAllRolesAsync()).Select(r => r.Name).ToList();
             return View(model);
         }
 
