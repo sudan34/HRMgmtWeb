@@ -31,7 +31,7 @@ namespace HRMgmtWeb.Areas.HR.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Create()
-        {
+         {
             try
             {
                 // Ensure proper async execution

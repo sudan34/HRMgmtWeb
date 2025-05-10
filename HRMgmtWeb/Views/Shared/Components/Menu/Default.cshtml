@@ -1,30 +1,25 @@
 ﻿@model IEnumerable<HRMgmtWeb.Models.Menu>
 
-<ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
-    @foreach (var menuItem in Model)
-    {
-        bool hasChildren = menuItem.Children?.Any() == true;
-        string url = string.IsNullOrEmpty(menuItem.Url) ? "#" : menuItem.Url;
-        string linkClasses = hasChildren ? "nav-link has-arrow" : "nav-link";
-        string itemClasses = hasChildren ? "nav-item has-treeview" : "nav-item";
+@foreach (var menuItem in Model)
+{
+    bool hasChildren = menuItem.Children?.Any() == true;
+    string url = string.IsNullOrEmpty(menuItem.Url) ? "#" : menuItem.Url;
+    string linkClasses = hasChildren ? "nav-link collapsed" : "nav-link";
+    string itemClasses = hasChildren ? "nav-item has-treeview" : "nav-item";
+    string arrowIcon = hasChildren ? "<i class='right fas fa-angle-left'></i>" : "";
 
-        <li class="@itemClasses">
-            <a href="@url" class="@linkClasses">
-                @if (!string.IsNullOrEmpty(menuItem.IconClass))
-                {
-                    <i class="nav-icon @menuItem.IconClass"></i>
-                }
-                <p>
-                    @menuItem.Title
-                    @if (hasChildren)
-                    {
-                        <i class="nav-arrow bi bi-chevron-right"></i>
-                    }
-                </p>
-            </a>
+    <li class="@itemClasses">
+        <a href="@url" class="@linkClasses" @(hasChildren ? "data-bs-toggle=collapse data-bs-target=#menu-" + menuItem.Id : "")>
+            <i class="nav-icon @menuItem.IconClass"></i>
+            <p>
+                @menuItem.Title
+                @Html.Raw(arrowIcon)
+            </p>
+        </a>
 
-            @if (hasChildren)
-            {
+        @if (hasChildren)
+        {
+            <div class="collapse" id="menu-@menuItem.Id">
                 <ul class="nav nav-treeview">
                     @foreach (var child in menuItem.Children.OrderBy(c => c.Order))
                     {
@@ -36,7 +31,7 @@
                         </li>
                     }
                 </ul>
-            }
-        </li>
-    }
-</ul>
+            </div>
+        }
+    </li>
+}

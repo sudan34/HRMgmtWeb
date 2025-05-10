@@ -1,19 +1,21 @@
 ﻿<!--begin::Sidebar-->
-<aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+<aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
     <!--begin::Sidebar Brand-->
-    <div class="sidebar-brand">
-        <a href="/" class="brand-link">
+    <div class="sidebar-brand p-3">
+        <a href="/" class="brand-link text-decoration-none d-flex align-items-center">
             <img src="/assets/img/AdminLTELogo.png"
                  alt="AdminLTE Logo"
-                 class="brand-image opacity-75 shadow" />
-            <span class="brand-text fw-light">HR Mgmt Web</span>
+                 class="brand-image img-circle elevation-3 opacity-75" />
+            <span class="brand-text font-weight-light ms-2">HR Mgmt Web</span>
         </a>
     </div>
     <!--end::Sidebar Brand-->
     <!--begin::Sidebar Wrapper-->
     <div class="sidebar-wrapper">
-        <nav class="mt-2">
-            @await Component.InvokeAsync("Menu")
+        <nav class="mt-2 px-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-accordion="false">
+                @await Component.InvokeAsync("Menu")
+            </ul>
         </nav>
     </div>
     <!--end::Sidebar Wrapper-->

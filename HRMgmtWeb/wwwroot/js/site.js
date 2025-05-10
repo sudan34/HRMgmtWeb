@@ -43,3 +43,58 @@ function setTheme(theme) {
         icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
     }
 }
+
+// Sidebar toggle functionality
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const body = document.body;
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            body.classList.toggle('sidebar-open');
+
+            // For mobile view
+            if (window.innerWidth < 992) {
+                body.classList.toggle('sidebar-collapsed');
+            } else {
+                // For desktop view
+                document.querySelector('.app-sidebar').classList.toggle('collapsed');
+                document.querySelector('.main-content').classList.toggle('expanded');
+            }
+        });
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function (e) {
+        if (window.innerWidth < 992 &&
+            !e.target.closest('.app-sidebar') &&
+            !e.target.closest('#sidebarToggle') &&
+            body.classList.contains('sidebar-open')) {
+            body.classList.remove('sidebar-open');
+            body.classList.add('sidebar-collapsed');
+        }
+    });
+
+    // Make menu items with children expandable
+    document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]').forEach(link => {
+        link.addEventListener('click', function (e) {
+            if (this.getAttribute('href') === '#') {
+                e.preventDefault();
+            }
+
+            const target = this.getAttribute('data-bs-target');
+            const collapse = document.querySelector(target);
+
+            // Toggle the collapsed class
+            this.classList.toggle('collapsed');
+
+            // Manually trigger the collapse
+            if (this.classList.contains('collapsed')) {
+                collapse.classList.remove('show');
+            } else {
+                collapse.classList.add('show');
+            }
+        });
+    });
+});
